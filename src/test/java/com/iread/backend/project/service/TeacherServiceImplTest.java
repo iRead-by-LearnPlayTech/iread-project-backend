@@ -1,23 +1,30 @@
 package com.iread.backend.project.service;
 
-import com.iread.backend.project.entity.Teacher;
+import com.iread.backend.project.config.jwt.JwtService;
+import com.iread.backend.project.dto.AuthDTO;
+import com.iread.backend.project.dto.AuthenticationDTORequest;
 import com.iread.backend.project.exception.EmailExistsException;
-import com.iread.backend.project.registration.token.ConfirmationToken;
-import com.iread.backend.project.registration.token.ConfirmationTokenService;
-import com.iread.backend.project.repository.TeacherRepository;
+import com.iread.backend.project.exception.NoSuchElementException;
+import com.iread.backend.project.token.Token;
+import com.iread.backend.project.token.TokenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.never;
+
+import com.iread.backend.project.repository.TeacherRepository;
+import com.iread.backend.project.registration.token.ConfirmationTokenService;
+import com.iread.backend.project.registration.token.ConfirmationToken;
+import com.iread.backend.project.entity.Teacher;
 
 class TeacherServiceImplTest {
 
@@ -27,6 +34,16 @@ class TeacherServiceImplTest {
     private ConfirmationTokenService confirmationTokenService;
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private JwtService jwtService;
+
+    @Mock
+    private AuthenticationManager authenticationManager;
+
+    @Mock
+    private TokenRepository tokenRepository;
+
     @InjectMocks
     private TeacherServiceImpl teacherServiceImpl;
 
@@ -62,6 +79,44 @@ class TeacherServiceImplTest {
         assertThrows(EmailExistsException.class, () -> teacherServiceImpl.singUpUser(existingUser));
         verify(teacherRepository, never()).save(existingUser);
         verify(confirmationTokenService, never()).saveConfirmationToken(any(ConfirmationToken.class));
+    }
+
+    @Test
+    void authenticate_Successful() {
+        // Arrange
+        AuthenticationDTORequest request = new AuthenticationDTORequest();
+        request.setEmail("correo@ejemplo.com");
+        request.setPassword("password");
+
+        Teacher user = new Teacher();
+        user.setId(1L);
+
+        when(teacherRepository.findUserByEmail(anyString())).thenReturn(Optional.of(user));
+        when(jwtService.generateToken(anyString(), anyMap(), any(Teacher.class))).thenReturn("fakeToken");
+        when(tokenRepository.findAllValidTokensBy(anyLong())).thenReturn(List.of(new Token()));
+
+        // Act
+        AuthDTO result = teacherServiceImpl.authenticate(request);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("fakeToken", result.getToken());
+
+    }
+
+    @Test
+    void authenticate_UserNotFound() {
+        // Arrange
+        AuthenticationDTORequest request = new AuthenticationDTORequest();
+        request.setEmail("correo_no_existente@ejemplo.com");
+        request.setPassword("password");
+
+        when(teacherRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
+
+        // Act and Assert
+        assertThrows(NoSuchElementException.class, () -> {
+            teacherServiceImpl.authenticate(request);
+        });
     }
 
 }
