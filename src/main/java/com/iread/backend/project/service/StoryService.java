@@ -83,29 +83,4 @@ public class StoryService {
         return story.getTitle();
     }
 
-    public Map<String, Object> deactivateStory(Long storyId) throws ResourceNotFoundException {
-        Story story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Story not found with id: " + storyId));
-
-        story.setActive(false);
-        storyRepository.save(story);
-
-        List<StudentActivity> studentActivities = story.getActivity().getStudentActivities();
-        List<Map<String, Object>> studentDetails = new ArrayList<>();
-
-        for (StudentActivity studentActivity : studentActivities) {
-            Map<String, Object> details = new HashMap<>();
-            details.put("nameStudent", studentActivity.getStudent().getNameStudent());
-            details.put("correctAnswer", studentActivity.getCorrectAnswer());
-            studentDetails.add(details);
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("title", story.getTitle());
-        response.put("students", studentDetails);
-        response.put("totalStudents", studentActivities.size());
-
-        return response;
-    }
-
 }
