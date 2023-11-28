@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoryResponse {
-    private Long storyId;
+public class StoryDTORequest {
     private String accessWord;
-    private Boolean active;
 }
