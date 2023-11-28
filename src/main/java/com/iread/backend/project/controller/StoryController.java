@@ -57,4 +57,11 @@ public class StoryController {
         return storyService.activateStory(storyId);
     }
 
+    @PutMapping("/deactivate/{storyId}")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Map<String, Object>> deactivateStory(@PathVariable Long storyId) {
+        Map<String, Object> response = storyService.deactivateStory(storyId);
+        return ResponseEntity.ok(response);
+    }
+
 }

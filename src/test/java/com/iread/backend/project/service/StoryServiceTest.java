@@ -1,9 +1,7 @@
 package com.iread.backend.project.service;
 
 import com.iread.backend.project.dto.StoryDTO;
-import com.iread.backend.project.entity.Activity;
-import com.iread.backend.project.entity.Story;
-import com.iread.backend.project.entity.Teacher;
+import com.iread.backend.project.entity.*;
 import com.iread.backend.project.exception.ResourceNotFoundException;
 import com.iread.backend.project.mapper.StoryMapper;
 import com.iread.backend.project.repository.ActivityRepository;
@@ -16,10 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,6 +31,7 @@ class StoryServiceTest {
 
     @InjectMocks
     private StoryService storyService;
+
 
     @BeforeEach
     void setUp() {
@@ -189,6 +185,7 @@ class StoryServiceTest {
         verify(storyMapper, never()).mapToDTO(any(Story.class));
     }
 
+
     @Test
     void activateStory_Successful() {
         // Arrange
@@ -228,4 +225,58 @@ class StoryServiceTest {
         verify(storyRepository, never()).save(any(Story.class));
     }
 
+
+    @Test
+    void deactivateStory_Successful() {
+        // Arrange
+        Long storyId = 1L;
+
+        Story story = new Story();
+        story.setId(storyId);
+        story.setTitle("Test Story");
+
+        Student student = new Student();
+        student.setNameStudent("John Doe");
+
+        StudentActivity studentActivity1 = new StudentActivity();
+        studentActivity1.setCorrectAnswer(1);
+        studentActivity1.setStudent(student);
+
+        StudentActivity studentActivity2 = new StudentActivity();
+        studentActivity2.setCorrectAnswer(2);
+        studentActivity2.setStudent(student);
+
+        Activity activity = new Activity();
+        activity.setStudentActivities(Arrays.asList(studentActivity1, studentActivity2));
+
+        story.setActivity(activity);
+
+        when(storyRepository.findById(storyId)).thenReturn(Optional.of(story));
+
+        // Act
+        Map<String, Object> result = storyService.deactivateStory(storyId);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Test Story", result.get("title"));
+        assertEquals(2, ((List<?>) result.get("students")).size());
+        assertEquals(2, result.get("totalStudents"));
+
+        verify(storyRepository, times(1)).findById(storyId);
+        verify(storyRepository, times(1)).save(story);
+    }
+
+    @Test
+    void deactivateStory_StoryNotFound() {
+        // Arrange
+        Long storyId = 1L;
+
+        when(storyRepository.findById(storyId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> storyService.deactivateStory(storyId));
+
+        verify(storyRepository, times(1)).findById(storyId);
+        verify(storyRepository, never()).save(any());
+    }
 }
