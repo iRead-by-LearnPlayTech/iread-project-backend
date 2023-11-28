@@ -1,5 +1,6 @@
 package com.iread.backend.project.controller;
 
+import com.iread.backend.project.dto.StoryDTO;
 import com.iread.backend.project.entity.Activity;
 import com.iread.backend.project.entity.Story;
 import com.iread.backend.project.service.StoryService;
@@ -33,6 +34,20 @@ public class StoryController {
     public ResponseEntity<Story> assignActivityToStory(@PathVariable Long storyId, @RequestBody Activity activityDetails) {
         Story updatedStory = storyService.assignActivityToStory(storyId, activityDetails);
         return ResponseEntity.ok(updatedStory);
+    }
+
+    @GetMapping("/byTeacher/{teacherId}")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<List<StoryDTO>> getStoriesByTeacherId(@PathVariable Long teacherId) {
+        List<StoryDTO> storyDTOS = storyService.findAllStoriesByTeacherId(teacherId);
+        return ResponseEntity.ok(storyDTOS);
+    }
+
+    @GetMapping("/{storyId}/activity")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Activity> getActivityByStoryId(@PathVariable Long storyId) {
+        Activity activity = storyService.getActivityByStoryId(storyId);
+        return ResponseEntity.ok(activity);
     }
 
 
