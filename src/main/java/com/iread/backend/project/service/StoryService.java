@@ -1,14 +1,19 @@
 package com.iread.backend.project.service;
 
+import com.iread.backend.project.dto.StoryDTO;
 import com.iread.backend.project.entity.Activity;
 import com.iread.backend.project.entity.Story;
 import com.iread.backend.project.entity.Teacher;
 import com.iread.backend.project.exception.ResourceNotFoundException;
+import com.iread.backend.project.mapper.StoryMapper;
 import com.iread.backend.project.repository.ActivityRepository;
 import com.iread.backend.project.repository.StoryRepository;
 import com.iread.backend.project.repository.TeacherRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -17,6 +22,7 @@ public class StoryService {
     private final StoryRepository storyRepository;
     private final TeacherRepository teacherRepository;
     private final ActivityRepository activityRepository;
+    private final StoryMapper storyMapper;
 
     public Story createStoryForTeacher(Long teacherId, Story story) throws ResourceNotFoundException {
         Teacher teacher = teacherRepository.findTeacherById(teacherId);
@@ -42,10 +48,25 @@ public class StoryService {
         newActivity.setStory(story);
         activityRepository.save(newActivity);
 
-        story.setActivities(newActivity);
+        story.setActivity(newActivity);
         storyRepository.save(story);
 
         return story;
+    }
+
+    public List<StoryDTO> findAllStoriesByTeacherId(Long teacherId) {
+        List<Story> stories = storyRepository.findAllStoriesByTeacherId(teacherId);
+
+        return stories.stream()
+                .map(storyMapper::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public Activity getActivityByStoryId(Long storyId) throws ResourceNotFoundException {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Story not found with id: " + storyId));
+
+        return story.getActivity();
     }
 
 }

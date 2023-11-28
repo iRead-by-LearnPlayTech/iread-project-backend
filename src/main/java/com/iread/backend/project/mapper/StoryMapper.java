@@ -20,7 +20,7 @@ public class StoryMapper {
                 .title(story.getTitle())
                 .dateCreation(story.getDateCreation())
                 .accessWord(story.getAccessWord())
-                .imgPreview(story.getActivities().getImgPreview())
+                .imgPreview(story.getActivity().getImgPreview())
                 .build();
     }
 

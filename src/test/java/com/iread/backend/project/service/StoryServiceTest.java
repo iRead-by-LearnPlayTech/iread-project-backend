@@ -1,9 +1,11 @@
 package com.iread.backend.project.service;
 
+import com.iread.backend.project.dto.StoryDTO;
 import com.iread.backend.project.entity.Activity;
 import com.iread.backend.project.entity.Story;
 import com.iread.backend.project.entity.Teacher;
 import com.iread.backend.project.exception.ResourceNotFoundException;
+import com.iread.backend.project.mapper.StoryMapper;
 import com.iread.backend.project.repository.ActivityRepository;
 import com.iread.backend.project.repository.StoryRepository;
 import com.iread.backend.project.repository.TeacherRepository;
@@ -13,6 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +31,8 @@ class StoryServiceTest {
     private TeacherRepository teacherRepository;
     @Mock
     private ActivityRepository activityRepository;
+    @Mock
+    private StoryMapper storyMapper;
 
     @InjectMocks
     private StoryService storyService;
@@ -102,7 +110,6 @@ class StoryServiceTest {
         verify(storyRepository, times(1)).save(existingStory);
     }
 
-
     @Test
     void assignActivityToStory_StoryNotFound_ShouldThrowException() {
         // Arrange
@@ -122,4 +129,63 @@ class StoryServiceTest {
         verify(storyRepository, never()).save(any(Story.class));
     }
 
+
+    @Test
+    void findAllStoriesByTeacherId_Successful() {
+        // Arrange
+        Long teacherId = 1L;
+
+        Story story1 = new Story();
+        story1.setId(1L);
+        story1.setTitle("Story 1");
+        story1.setDateCreation(LocalDateTime.now());
+        story1.setAccessWord("Access1");
+
+        Story story2 = new Story();
+        story2.setId(2L);
+        story2.setTitle("Story 2");
+        story2.setDateCreation(LocalDateTime.now());
+        story2.setAccessWord("Access2");
+
+        List<Story> stories = Arrays.asList(story1, story2);
+
+        when(storyRepository.findAllStoriesByTeacherId(teacherId)).thenReturn(stories);
+
+        StoryDTO storyDto1 = new StoryDTO(1L, "Story 1", LocalDateTime.now(), "Access1", "ImgPreview1");
+        StoryDTO storyDto2 = new StoryDTO(2L, "Story 2", LocalDateTime.now(), "Access2", "ImgPreview2");
+
+        when(storyMapper.mapToDTO(story1)).thenReturn(storyDto1);
+        when(storyMapper.mapToDTO(story2)).thenReturn(storyDto2);
+
+        // Act
+        List<StoryDTO> result = storyService.findAllStoriesByTeacherId(teacherId);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(storyDto1, result.get(0));
+        assertEquals(storyDto2, result.get(1));
+
+        verify(storyRepository, times(1)).findAllStoriesByTeacherId(teacherId);
+        verify(storyMapper, times(2)).mapToDTO(any(Story.class));
+    }
+
+
+    @Test
+    void findAllStoriesByTeacherId_NoStoriesFound() {
+        // Arrange
+        Long teacherId = 1L;
+
+        when(storyRepository.findAllStoriesByTeacherId(teacherId)).thenReturn(Collections.emptyList());
+
+        // Act
+        List<StoryDTO> result = storyService.findAllStoriesByTeacherId(teacherId);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        verify(storyRepository, times(1)).findAllStoriesByTeacherId(teacherId);
+        verify(storyMapper, never()).mapToDTO(any(Story.class));
+    }
 }

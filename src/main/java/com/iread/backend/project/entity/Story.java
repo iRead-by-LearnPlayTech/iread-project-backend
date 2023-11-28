@@ -43,7 +43,7 @@ public class Story {
     private Teacher teacher;
 
     @OneToOne(mappedBy = "story", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Activity activities;
+    private Activity activity;
 
     @PrePersist
     public void prePersist() {
