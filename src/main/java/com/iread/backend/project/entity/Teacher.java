@@ -1,5 +1,7 @@
 package com.iread.backend.project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.iread.backend.project.token.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -10,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,6 +49,19 @@ public class Teacher implements UserDetails {
 
     @Column(name = "enabled")
     private Boolean enabled = false;
+
+    @OneToMany(mappedBy = "teacher")
+    @JsonIgnore
+    private List<Story> stories;
+
+    @Column(name = "recovery_token")
+    private String recoveryToken;
+
+    @Column(name = "recovery_token_expiry")
+    private LocalDateTime recoveryTokenExpiry;
+
+    @OneToMany(mappedBy = "teacher")
+    private List<Token> tokens;
 
     public Teacher(String name, String surname, String email, String password) {
         this.name = name;
