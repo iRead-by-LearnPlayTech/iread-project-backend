@@ -188,4 +188,44 @@ class StoryServiceTest {
         verify(storyRepository, times(1)).findAllStoriesByTeacherId(teacherId);
         verify(storyMapper, never()).mapToDTO(any(Story.class));
     }
+
+    @Test
+    void activateStory_Successful() {
+        // Arrange
+        Long storyId = 1L;
+
+        Story existingStory = new Story();
+        existingStory.setId(storyId);
+        existingStory.setTitle("Test Story");
+        existingStory.setActive(false);
+
+        when(storyRepository.findById(storyId)).thenReturn(Optional.of(existingStory));
+
+        // Act
+        String result = storyService.activateStory(storyId);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(existingStory.getTitle(), result);
+        assertTrue(existingStory.getActive());
+
+        // Verify that the save method was called
+        verify(storyRepository, times(1)).save(existingStory);
+    }
+
+
+    @Test
+    void activateStory_StoryNotFound() {
+        // Arrange
+        Long storyId = 1L;
+
+        when(storyRepository.findById(storyId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> storyService.activateStory(storyId));
+
+        // Verify that the save method was not called
+        verify(storyRepository, never()).save(any(Story.class));
+    }
+
 }

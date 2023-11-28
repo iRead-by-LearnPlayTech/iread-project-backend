@@ -31,4 +31,8 @@ public class Activity {
     @JsonIgnore
     private Story story;
 
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<StudentActivity> studentActivities;
+
 }
