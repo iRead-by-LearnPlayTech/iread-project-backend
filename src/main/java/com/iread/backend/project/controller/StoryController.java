@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/stories")
@@ -50,5 +51,17 @@ public class StoryController {
         return ResponseEntity.ok(activity);
     }
 
+    @PutMapping("/activate/{storyId}")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public String activateStory(@PathVariable Long storyId) {
+        return storyService.activateStory(storyId);
+    }
+
+    @PutMapping("/deactivate/{storyId}")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Map<String, Object>> deactivateStory(@PathVariable Long storyId) {
+        Map<String, Object> response = storyService.deactivateStory(storyId);
+        return ResponseEntity.ok(response);
+    }
 
 }
