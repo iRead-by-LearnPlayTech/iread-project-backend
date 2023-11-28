@@ -6,6 +6,7 @@ import com.iread.backend.project.dto.AuthenticationDTORequest;
 import com.iread.backend.project.entity.Role;
 import com.iread.backend.project.entity.Teacher;
 import com.iread.backend.project.exception.EmailExistsException;
+import com.iread.backend.project.exception.NoSuchElementException;
 import com.iread.backend.project.mapper.TeacherMapper;
 import com.iread.backend.project.registration.token.ConfirmationToken;
 import com.iread.backend.project.registration.token.ConfirmationTokenService;
@@ -27,7 +28,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TeacherServiceImpl implements TeacherService{
 
-    private final TeacherRepository teacherRepository;
+    public final TeacherRepository teacherRepository;
     private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final AuthenticationManager authenticationManager;
@@ -68,7 +69,7 @@ public class TeacherServiceImpl implements TeacherService{
         );
 
         var user = teacherRepository.findUserByEmail(request.getEmail())
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException("Teacher not founded"));
 
         Long teacherID = user.getId();
         var extraClaims = new HashMap<String, Object>();
@@ -80,7 +81,7 @@ public class TeacherServiceImpl implements TeacherService{
                 .token(jwtToken).build();
     }
 
-    private void revokeAllUserTokens(Teacher user) {
+    void revokeAllUserTokens(Teacher user) {
         var validUserTokens = tokenRepository.findAllValidTokensBy(user.getId());
         if (validUserTokens.isEmpty())
             return;
@@ -92,7 +93,7 @@ public class TeacherServiceImpl implements TeacherService{
 
     }
 
-    private void saveUserToken(Teacher user, String jwtToken) {
+    void saveUserToken(Teacher user, String jwtToken) {
         var token = Token.builder()
                 .teacher(user)
                 .token(jwtToken)
