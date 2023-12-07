@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/students")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://iread4learnplaytech.netlify.app")
 @Tag(name = "Student", description = "Student management APIs")
 @AllArgsConstructor
 public class StudentController {

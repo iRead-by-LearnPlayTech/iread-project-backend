@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://iread4learnplaytech.netlify.app")
 @Tag(name = "Authentication", description = "Authentication management APIs")
 @AllArgsConstructor
 public class AuthController {

@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/stories")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://iread4learnplaytech.netlify.app")
 @Tag(name = "Story", description = "Story management APIs")
 @AllArgsConstructor
 public class StoryController {
