@@ -25,8 +25,8 @@ public class StoryService {
 
     private final StoryRepository storyRepository;
     private final TeacherRepository teacherRepository;
-    private final ActivityRepository activityRepository;
     private final StoryMapper storyMapper;
+    private final ActivityRepository activityRepository;
 
     public Story createStoryForTeacher(Long teacherId, Story story) throws ResourceNotFoundException {
         Teacher teacher = teacherRepository.findTeacherById(teacherId);
@@ -43,7 +43,7 @@ public class StoryService {
 
     public Story assignActivityToStory(Long storyId, Activity activityDetails) throws ResourceNotFoundException {
         Story story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Historia no encontrada: " + storyId));
+                .orElseThrow(() -> new ResourceNotFoundException("Story not found with id: " + storyId));
 
         Activity newActivity = new Activity();
         newActivity.setJsonConverted(activityDetails.getJsonConverted());
@@ -66,13 +66,6 @@ public class StoryService {
                 .collect(Collectors.toList());
     }
 
-    public Activity getActivityByStoryId(Long storyId) throws ResourceNotFoundException {
-        Story story = storyRepository.findById(storyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Story not found with id: " + storyId));
-
-        return story.getActivity();
-    }
-
     public String activateStory(Long storyId) throws ResourceNotFoundException {
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Story not found with id: " + storyId));
@@ -81,6 +74,13 @@ public class StoryService {
         storyRepository.save(story);
 
         return story.getTitle();
+    }
+
+    public Activity getActivityByStoryId(Long storyId) throws ResourceNotFoundException {
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Story not found with id: " + storyId));
+
+        return story.getActivity();
     }
 
     public Map<String, Object> deactivateStory(Long storyId) throws ResourceNotFoundException {
@@ -97,6 +97,7 @@ public class StoryService {
             Map<String, Object> details = new HashMap<>();
             details.put("nameStudent", studentActivity.getStudent().getNameStudent());
             details.put("correctAnswer", studentActivity.getCorrectAnswer());
+            details.put("consultedWord", studentActivity.getConsultedWord());
             studentDetails.add(details);
         }
 

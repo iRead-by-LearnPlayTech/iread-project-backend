@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/stories")
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Story", description = "Story management APIs")
 @AllArgsConstructor
 public class StoryController {
@@ -44,17 +44,17 @@ public class StoryController {
         return ResponseEntity.ok(storyDTOS);
     }
 
-    @GetMapping("/{storyId}/activity")
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Activity> getActivityByStoryId(@PathVariable Long storyId) {
-        Activity activity = storyService.getActivityByStoryId(storyId);
-        return ResponseEntity.ok(activity);
-    }
-
     @PutMapping("/activate/{storyId}")
     @SecurityRequirement(name = "Bearer Authentication")
     public String activateStory(@PathVariable Long storyId) {
         return storyService.activateStory(storyId);
+    }
+
+    //trae la actividad al niño: publicEndpoint
+    @GetMapping("/{storyId}/activity")
+    public ResponseEntity<Activity> getActivityByStoryId(@PathVariable Long storyId) {
+        Activity activity = storyService.getActivityByStoryId(storyId);
+        return ResponseEntity.ok(activity);
     }
 
     @PutMapping("/deactivate/{storyId}")
@@ -63,5 +63,4 @@ public class StoryController {
         Map<String, Object> response = storyService.deactivateStory(storyId);
         return ResponseEntity.ok(response);
     }
-
 }

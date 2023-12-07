@@ -6,8 +6,6 @@ import com.iread.backend.project.dto.AuthenticationDTORequest;
 import com.iread.backend.project.entity.Role;
 import com.iread.backend.project.entity.Teacher;
 import com.iread.backend.project.exception.EmailExistsException;
-import com.iread.backend.project.exception.NoSuchElementException;
-import com.iread.backend.project.mapper.TeacherMapper;
 import com.iread.backend.project.registration.token.ConfirmationToken;
 import com.iread.backend.project.registration.token.ConfirmationTokenService;
 import com.iread.backend.project.repository.TeacherRepository;
@@ -22,13 +20,14 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class TeacherServiceImpl implements TeacherService{
+public class TeacherServiceImpl implements TeacherService {
 
-    public final TeacherRepository teacherRepository;
+    private final TeacherRepository teacherRepository;
     private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final AuthenticationManager authenticationManager;
@@ -81,7 +80,12 @@ public class TeacherServiceImpl implements TeacherService{
                 .token(jwtToken).build();
     }
 
-    void revokeAllUserTokens(Teacher user) {
+    @Override
+    public int enableUser(String email) {
+        return teacherRepository.enableUser(email);
+    }
+
+    private void revokeAllUserTokens(Teacher user) {
         var validUserTokens = tokenRepository.findAllValidTokensBy(user.getId());
         if (validUserTokens.isEmpty())
             return;
@@ -93,7 +97,7 @@ public class TeacherServiceImpl implements TeacherService{
 
     }
 
-    void saveUserToken(Teacher user, String jwtToken) {
+    private void saveUserToken(Teacher user, String jwtToken) {
         var token = Token.builder()
                 .teacher(user)
                 .token(jwtToken)
@@ -104,8 +108,4 @@ public class TeacherServiceImpl implements TeacherService{
         tokenRepository.save(token);
     }
 
-    @Override
-    public int enableUser(String email) {
-        return teacherRepository.enableUser(email);
-    }
 }

@@ -23,7 +23,7 @@ public class StudentService {
     private final StoryRepository storyRepository;
     private final ActivityRepository activityRepository;
 
-    public Student enterName(Student student) {
+    public Student registerStudent(Student student) {
         return  studentRepository.save(student);
     }
 
@@ -41,7 +41,7 @@ public class StudentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
 
         Activity activity = activityRepository.findById(activityId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Activity not found with id: " + studentId));
+                .orElseThrow(() -> new ResourceNotFoundException("Activity not found with id: " + studentId));
 
         studentActivity.setStudent(student);
         studentActivity.setActivity(activity);
