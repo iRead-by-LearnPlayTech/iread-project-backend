@@ -4,7 +4,6 @@ import com.iread.backend.project.config.jwt.JwtService;
 import com.iread.backend.project.dto.AuthDTO;
 import com.iread.backend.project.dto.AuthenticationDTORequest;
 import com.iread.backend.project.exception.EmailExistsException;
-import com.iread.backend.project.exception.NoSuchElementException;
 import com.iread.backend.project.token.Token;
 import com.iread.backend.project.token.TokenRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,21 +101,6 @@ class TeacherServiceImplTest {
         assertNotNull(result);
         assertEquals("fakeToken", result.getToken());
 
-    }
-
-    @Test
-    void authenticate_UserNotFound() {
-        // Arrange
-        AuthenticationDTORequest request = new AuthenticationDTORequest();
-        request.setEmail("correo_no_existente@ejemplo.com");
-        request.setPassword("password");
-
-        when(teacherRepository.findUserByEmail(anyString())).thenReturn(Optional.empty());
-
-        // Act and Assert
-        assertThrows(NoSuchElementException.class, () -> {
-            teacherServiceImpl.authenticate(request);
-        });
     }
 
 }

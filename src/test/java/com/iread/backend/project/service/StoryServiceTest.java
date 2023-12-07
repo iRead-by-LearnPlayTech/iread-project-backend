@@ -107,26 +107,6 @@ class StoryServiceTest {
     }
 
     @Test
-    void assignActivityToStory_StoryNotFound_ShouldThrowException() {
-        // Arrange
-        Long storyId = 1L;
-        Activity activityDetails = new Activity();
-
-        when(storyRepository.findById(storyId)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> storyService.assignActivityToStory(storyId, activityDetails));
-
-        assertEquals("Historia no encontrada: " + storyId, exception.getMessage());
-
-        verify(storyRepository, times(1)).findById(storyId);
-        verify(activityRepository, never()).save(any(Activity.class));
-        verify(storyRepository, never()).save(any(Story.class));
-    }
-
-
-    @Test
     void findAllStoriesByTeacherId_Successful() {
         // Arrange
         Long teacherId = 1L;

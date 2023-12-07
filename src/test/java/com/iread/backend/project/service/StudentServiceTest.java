@@ -95,7 +95,7 @@ class StudentServiceTest {
         when(studentRepository.save(inputStudent)).thenReturn(savedStudent);
 
         // Act
-        Student result = studentService.enterName(inputStudent);
+        Student result = studentService.registerStudent(inputStudent);
 
         // Assert
         assertNotNull(result);
