@@ -21,7 +21,7 @@ public class StudentActivity {
     @Column(name = "correct_answer", nullable = false)
     private int correctAnswer;
 
-    @Column(name = "consulted_word", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "consulted_word", nullable = false, columnDefinition = "LONGTEXT")
     private String consultedWord;
 
     @ManyToOne

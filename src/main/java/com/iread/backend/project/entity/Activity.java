@@ -20,10 +20,10 @@ public class Activity {
     @Column(name = "activity_id", nullable = false)
     private Long id;
 
-    @Column(name = "json_converted", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "json_converted", nullable = false, columnDefinition = "LONGTEXT")
     private String jsonConverted;
 
-    @Column(name = "img_preview", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "img_preview", nullable = false, columnDefinition = "LONGTEXT")
     private String imgPreview;
 
     @OneToOne
