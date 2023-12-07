@@ -9,9 +9,6 @@ import com.iread.backend.project.exception.EmailExistsException;
 import com.iread.backend.project.registration.token.ConfirmationToken;
 import com.iread.backend.project.registration.token.ConfirmationTokenService;
 import com.iread.backend.project.repository.TeacherRepository;
-import com.iread.backend.project.token.Token;
-import com.iread.backend.project.token.TokenRepository;
-import com.iread.backend.project.token.TokenType;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,7 +29,6 @@ public class TeacherServiceImpl implements TeacherService {
     private final ConfirmationTokenService confirmationTokenService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final TokenRepository tokenRepository;
 
     @Override
     public String singUpUser(Teacher user) {
@@ -74,8 +70,7 @@ public class TeacherServiceImpl implements TeacherService {
         var extraClaims = new HashMap<String, Object>();
 
         var jwtToken = jwtService.generateToken(teacherID.toString(), extraClaims, user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
+
         return AuthDTO.builder()
                 .token(jwtToken).build();
     }
@@ -83,29 +78,6 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public int enableUser(String email) {
         return teacherRepository.enableUser(email);
-    }
-
-    private void revokeAllUserTokens(Teacher user) {
-        var validUserTokens = tokenRepository.findAllValidTokensBy(user.getId());
-        if (validUserTokens.isEmpty())
-            return;
-        validUserTokens.forEach(t -> {
-            t.setExpired(true);
-            t.setRevoked(true);
-        });
-        tokenRepository.saveAll(validUserTokens);
-
-    }
-
-    private void saveUserToken(Teacher user, String jwtToken) {
-        var token = Token.builder()
-                .teacher(user)
-                .token(jwtToken)
-                .tokenType(TokenType.BEARER)
-                .revoked(false)
-                .expired(false)
-                .build();
-        tokenRepository.save(token);
     }
 
 }

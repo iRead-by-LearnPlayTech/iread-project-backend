@@ -4,8 +4,6 @@ import com.iread.backend.project.config.jwt.JwtService;
 import com.iread.backend.project.dto.AuthDTO;
 import com.iread.backend.project.dto.AuthenticationDTORequest;
 import com.iread.backend.project.exception.EmailExistsException;
-import com.iread.backend.project.token.Token;
-import com.iread.backend.project.token.TokenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,9 +36,6 @@ class TeacherServiceImplTest {
 
     @Mock
     private AuthenticationManager authenticationManager;
-
-    @Mock
-    private TokenRepository tokenRepository;
 
     @InjectMocks
     private TeacherServiceImpl teacherServiceImpl;
@@ -92,7 +86,6 @@ class TeacherServiceImplTest {
 
         when(teacherRepository.findUserByEmail(anyString())).thenReturn(Optional.of(user));
         when(jwtService.generateToken(anyString(), anyMap(), any(Teacher.class))).thenReturn("fakeToken");
-        when(tokenRepository.findAllValidTokensBy(anyLong())).thenReturn(List.of(new Token()));
 
         // Act
         AuthDTO result = teacherServiceImpl.authenticate(request);

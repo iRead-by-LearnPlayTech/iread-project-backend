@@ -1,7 +1,6 @@
 package com.iread.backend.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.iread.backend.project.token.Token;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -57,9 +56,6 @@ public class Teacher implements UserDetails {
 
     @Column(name = "recovery_token_expiry")
     private LocalDateTime recoveryTokenExpiry;
-
-    @OneToMany(mappedBy = "teacher")
-    private List<Token> tokens;
 
     public Teacher(String name, String surname, String email, String password) {
         this.name = name;

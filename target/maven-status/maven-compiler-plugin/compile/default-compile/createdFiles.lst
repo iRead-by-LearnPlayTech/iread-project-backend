@@ -4,10 +4,8 @@ com\iread\backend\project\dto\AuthDTO$AuthDTOBuilder.class
 com\iread\backend\project\entity\StudentActivity.class
 com\iread\backend\project\config\WebConfig.class
 com\iread\backend\project\exception\CustomExceptionHandler.class
-com\iread\backend\project\token\Token.class
 com\iread\backend\project\repository\ActivityRepository.class
 com\iread\backend\project\repository\StudentActivityRepository.class
-com\iread\backend\project\token\TokenType.class
 com\iread\backend\project\registration\RegistrationService.class
 com\iread\backend\project\entity\Teacher.class
 com\iread\backend\project\dto\AuthenticationDTORequest.class
@@ -25,7 +23,6 @@ com\iread\backend\project\service\StudentService.class
 com\iread\backend\project\service\TeacherServiceImpl.class
 com\iread\backend\project\config\EmailConfig.class
 com\iread\backend\project\dto\AuthDTO.class
-com\iread\backend\project\token\Token$TokenBuilder.class
 com\iread\backend\project\repository\StudentRepository.class
 com\iread\backend\project\entity\Role.class
 com\iread\backend\project\exception\NoSuchElementException.class
@@ -54,4 +51,3 @@ com\iread\backend\project\mapper\StoryMapper.class
 com\iread\backend\project\registration\token\ConfirmationToken.class
 com\iread\backend\project\config\MapperConfig.class
 com\iread\backend\project\repository\StoryRepository.class
-com\iread\backend\project\token\TokenRepository.class
