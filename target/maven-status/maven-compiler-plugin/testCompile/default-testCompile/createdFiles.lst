@@ -1,0 +1,4 @@
+com\iread\backend\project\service\StoryServiceTest.class
+com\iread\backend\project\IreadProjectBackendApplicationTests.class
+com\iread\backend\project\service\TeacherServiceImplTest.class
+com\iread\backend\project\service\StudentServiceTest.class
